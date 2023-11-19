@@ -30,7 +30,6 @@ def get_token_prices() ->  dict[str, float]:
         token_prices[token_address] = result[token_info.coingecko]['usd']
 
     return token_prices
-    
 
 @app.get('/accountData/{account_address}')
 def get_account_data(account_address: str):
@@ -53,7 +52,8 @@ def get_account_data(account_address: str):
         token_symbol = transfer_info['tokenSymbol']
 
         action_type: ActionType
-        if transfer_info['from'] == account_address:
+        from_address = to_checksum_address(transfer_info['from'])
+        if from_address == account_address:
             action_type = 'send'
             message = f'Send {human_amount} {token_symbol}'
         else:
@@ -68,7 +68,7 @@ def get_account_data(account_address: str):
             message=message,
             link=link
         ))
-    
+
     serialized_history = []
     for action in history:
         serialized_history.append(action.to_json())
